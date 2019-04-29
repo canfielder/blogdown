@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Evan Canfield</title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on Evan Canfield</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 29 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Oh The Places I&#39;ve Been</title>
+      <link>/posts/where-have-i-traveled/</link>
+      <pubDate>Mon, 29 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/where-have-i-traveled/</guid>
+      <description>A few years ago, as I was planning a few trips, I was trying to figure out every place I had traveled, particularly in the United States. This started with putting together every state I had gone to, but eventually the question gnawed at for long enough that I put together a list of every county I’d crossed into. That was a bit harder, but I feel confident I was able to accurately recall 95% or more of the counties I’ve been in.</description>
+    </item>
+    
+  </channel>
+</rss>
