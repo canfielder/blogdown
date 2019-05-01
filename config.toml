@@ -1,4 +1,4 @@
-baseURL = "http://example.org/"
+baseURL = "https://evancanfield.netlify.com/"
 languageCode = "en-us"
 title = "Evan Canfield"
 theme = "ezhil"
@@ -13,7 +13,7 @@ pygmentscodefencesguesssyntax = true
 [params]
 	subtitle = "~ Always Read the Plaque ~"
 	# Number of posts to show in recent posts list.
-	recentPostsCount = 10
+	recentPostsCount = 5
 	# Content types which are excluded from recent posts and archive page.
 	excludedTypes = ["page"]
 	disableDisqusTypes = ["page"]

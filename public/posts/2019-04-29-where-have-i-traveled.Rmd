@@ -335,8 +335,8 @@ leaflet(options = leafletOptions(minZoom = 3)) %>%
           zoom = 4) %>%
   setMaxBounds(lng1 = -180, 
                lng2 = -60,
-               lat1 = 70, 
-               lat2 = 20)
+               lat1 = 73, 
+               lat2 = 15)
 ```
 
-This leaflet visual runs pretty slow. In the future I hope to figure out a way to get the app to run more smoothly. But this interactive visual is not just another way to visualize  counties I been to. It is perhaps more useful as a tool to determine which counties I try to visit on future trips. Roads, towns, and other places of interest are very easy to see in relation to county lines.
+This leaflet visual runs slower that I would ideally want. In the future I hope to figure out a way to get the app to run more smoothly. But this interactive visual is not just another way to visualize  counties I been to. It is perhaps more useful as a tool to determine which counties I try to visit on future trips. Roads, towns, and other places of interest are very easy to see in relation to county lines.

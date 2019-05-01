@@ -36,6 +36,10 @@ if (!require(ggthemes)) {install.packages('ggthemes')}
 library(ggthemes)
 if (!require(RColorBrewer)) {install.packages('RColorBrewer')} 
 library(RColorBrewer)
+if (!require(grid)) {install.packages('grid')} 
+library(grid)
+if (!require(gridExtra)) {install.packages('gridExtra')} 
+library(gridExtra)
 ```
 
 #Map of States Visited
@@ -107,28 +111,24 @@ cols <- c("#F8F9F9", "#2471A3")
 ```{r us_state_plot}
 cols <- c("#F4F6F6", "#1F618D")
 
-US_state_1 <- ggplot(data = state.df_visited, 
+US_state <- ggplot(data = state.df_visited, 
                mapping = aes(x = long, y = lat, 
-                             fill = factor(Visited), group = group))
-
-US_state_2 <- US_state_1 + geom_polygon(color = "gray80", size = 0.05) 
-
-US_state_3 <- US_state_2 + scale_fill_manual(values = cols) 
-
-US_state_4 <- US_state_3 + 
+                             fill = factor(Visited), group = group))+
+  geom_polygon(color = "gray80", size = 0.05) +
+  scale_fill_manual(values = cols) +
   theme_map() + 
   guides(fill=FALSE)+
   coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
   labs(title = "United States")
 
-US_state_4
+US_state
 ```
 
-Viola! 
+Voila! 
 
 Above is a map of every state in the Unites States I have visited, sort of. Technically I have been to Illinois when I transferred flights at O'Hare, but I'm not counting that.
 
-Yet something feels off about this map. Yes, I have been to all those states, but crossing a state line is not the same as exploring a state. Therefore, instead of just plotting every state I've crossed into, I think it would be interesting to plot every county I have been in.
+Yet something feels off about this map. Yes, I have been to all those states, but crossing a state line is not the same as exploring a state. Therefore, instead of just plotting every state that I have crossed into, I think it would be interesting to plot every county I have been in.
 
 #Map of Counties Visited
 
@@ -203,29 +203,30 @@ county.df_visited <- left_join(county.df, county_list_active,
 I used the state latitude and longitude dataframe in this plot, as well as the county data. Overlaying the state boundaries data on the county data makes for a clearer map.
 
 ```{r us_county_plot}
-US_1 <- ggplot(mapping = aes(x = long, y = lat, group = group))
-
-US_2 <- US_1 + geom_polygon(data = county.df_visited, 
+US_county <- ggplot(mapping = aes(x = long, y = lat, group = group)) +
+  geom_polygon(data = county.df_visited, 
                             mapping = aes(fill = factor(Visited)), 
-                            color = "gray80", size = 0.05) 
-
-US_3 <- US_2 + scale_fill_manual(values = cols) 
-
-US_4 <- US_3 + geom_polygon(data = state.df,
-                            color = "black", 
-                            fill = NA, 
-                            size = 0.1)
-
-US_5 <- US_4 + theme_map() + 
-    guides(fill=FALSE) +
-    coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
-    labs(title = "United States")
+                            color = "gray80", size = 0.05) +
+  scale_fill_manual(values = cols) + 
+  geom_polygon(data = state.df,
+               color = "black", 
+               fill = NA, 
+               size = 0.1) +
+  theme_map() + 
+  guides(fill=FALSE) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  labs(title = "United States")
   
-
-US_5 
+US_county
 ```
 
-Well, that certainly looks a lot different than the map of just states visited. I need to get out more.
+Well, that certainly looks a lot different than the map of just states visited. Let's take a look at the state level and county level maps side by side.
+
+```{r us_state_and_county_plots}
+grid.arrange(US_state, US_county, ncol = 2)
+```
+
+I need to get out more.
 
 I am also particularly curious of the New England region as well as North Carolina. I grew up in Connecticut and my family lived all over New England. Family trips covered a lot of ground in those states. I currently live in North Carolina, and have for over 8 years. How much of these areas, in which I have spent so much of my life, have I really seen.
 
@@ -238,24 +239,20 @@ state.df_new_england <- state.df %>%
   filter(STUSPS %in% c("CT", "RI", "MA", "VT", "NH", "ME"))
 
 
-New_England_1 <- ggplot(data = county.df_visited_new_england, 
-              aes(x = long, y = lat, fill = factor(Visited), group = group))
-
-New_England_2 <- New_England_1 + geom_polygon(color = "gray80", size = 0.05)
-
-New_England_3 <- New_England_2 + scale_fill_manual(values = cols)
-
-New_England_4 <- New_England_3 + geom_polygon(data = state.df_new_england,
-                            color = "black", 
-                            fill = NA, 
-                            size = 0.25) 
-
-New_England_5 <- New_England_4 + theme_map() + 
+New_England_county <- ggplot(data = county.df_visited_new_england, 
+              aes(x = long, y = lat, fill = factor(Visited), group = group)) +
+  geom_polygon(color = "gray80", size = 0.05) +
+  scale_fill_manual(values = cols) +
+  geom_polygon(data = state.df_new_england,
+               color = "black", 
+               fill = NA, 
+               size = 0.25) + 
+  theme_map() + 
   guides(fill=FALSE) +
   coord_equal()+
   labs(title = "New England")
 
-New_England_5
+New_England_county
 ```
 
 ```{r north_carolina_county_plot}
@@ -290,7 +287,7 @@ Honestly, no surprises here. For New England it's all of Connecticut, Rhode Isla
 
 For North Carolina, I have been everywhere in the western part of the state. I currently live in Charlotte, which is close-ish to the center of the state. Since I've always been a bigger fan of the mountains than the beach, heading west from Charlotte more than east tracks. 
 
-#Interactive Visual
+#Leaflet
 
 To try one last thing, I want to generate an interactive visual. I used Leaflet for this. I plant on mapping the same shaded polygons I previously plotted in ggplot on top of the leaflet map. For this plot we do not need to filter out US Territories or Alaska or Hawaii. A complete map of the world is generated regardless. 
 
@@ -335,8 +332,8 @@ leaflet(options = leafletOptions(minZoom = 3)) %>%
           zoom = 4) %>%
   setMaxBounds(lng1 = -180, 
                lng2 = -60,
-               lat1 = 70, 
-               lat2 = 20)
+               lat1 = 73, 
+               lat2 = 15)
 ```
 
-This leaflet visual runs pretty slow. In the future I hope to figure out a way to get the app to run more smoothly. But this interactive visual is not just another way to visualize  counties I been to. It is perhaps more useful as a tool to determine which counties I try to visit on future trips. Roads, towns, and other places of interest are very easy to see in relation to county lines.
+This leaflet visual runs slower that I would ideally want. In the future I hope to figure out a way to get the app to run more smoothly. But this interactive visual is not just another way to visualize  counties I been to. It is perhaps more useful as a tool to determine which counties I try to visit on future trips. Roads, towns, and other places of interest are very easy to see in relation to county lines.
