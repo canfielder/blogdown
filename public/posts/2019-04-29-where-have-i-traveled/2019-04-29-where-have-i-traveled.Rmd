@@ -263,24 +263,20 @@ county.df_visited_nc <- county.df_visited %>%
 state.df_nc <- state.df %>%
   filter(STUSPS %in% c("NC"))
 
-NC_1 <- ggplot(data = county.df_visited_nc, 
-               aes(x = long, y = lat, fill = factor(Visited), group = group))
-
-NC_2 <- NC_1 + geom_polygon(color = "gray80", size = 0.05)
-
-NC_3 <- NC_2 + scale_fill_manual(values = cols)
-
-NC_4 <- NC_3 + geom_polygon(data = state.df_nc,
-                            color = "black", 
-                            fill = NA, 
-                            size = 0.25) 
-
-NC_5 <- NC_4 + theme_map() + 
+NC_county <- ggplot(data = county.df_visited_nc, 
+               aes(x = long, y = lat, fill = factor(Visited), group = group)) + 
+  geom_polygon(color = "gray80", size = 0.05) + 
+  scale_fill_manual(values = cols) +
+  geom_polygon(data = state.df_nc,
+                      color = "black", 
+                      fill = NA, 
+                      size = 0.25) +
+  theme_map() + 
   guides(fill=FALSE) +
   coord_equal() +
   labs(title = "North Carolina")
 
-NC_5
+NC_county
 ```
 
 Honestly, no surprises here. For New England it's all of Connecticut, Rhode Island, and New Hampshire, with only Martha's Vineyard and Nantucket missed in Massachusetts, and one county being missed in northeast Vermont. But I have barely scratched the surface of Maine. Based on where my extended family resided when I was growing up, this map pretty much sums up where we would have traveled for family visits and vacations.
