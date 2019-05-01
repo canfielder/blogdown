@@ -6,7 +6,7 @@ date: '2019-04-29'
 slug: where-have-i-traveled
 categories: []
 tags: [maps, R]
-draft: yes
+draft: false
 ---
 
 A few years ago, as I was planning a few trips, I was trying to figure out every place I had traveled, particularly in the United States. This started with putting together every state I had gone to, but eventually the question gnawed at for long enough that I put together a list of every county I’d crossed into. That was a bit harder, but I feel confident I was able to accurately recall 95% or more of the counties I’ve been in. It helps when family vacations were generally to the same places each year, and extended family all lived fairly close. 
