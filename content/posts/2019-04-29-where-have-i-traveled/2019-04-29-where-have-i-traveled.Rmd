@@ -104,13 +104,12 @@ state.df_visited <-left_join(state.df, state_list_active, by = c("STUSPS"))
 Before plotting the map I defined my colors. I plan on generating several different plots so I would like to define a default color scheme I can easily call to, rather than repeating the call in each plot's code.
 
 ```{r color_fill}
-cols <- c("#F8F9F9", "#2471A3")
+cols <- c("#F4F6F6", "#1F618D")
 ```
 
+Now that the colors have been defined I can plot the map of states visisted.
 
 ```{r us_state_plot}
-cols <- c("#F4F6F6", "#1F618D")
-
 US_state <- ggplot(data = state.df_visited, 
                mapping = aes(x = long, y = lat, 
                              fill = factor(Visited), group = group))+
