@@ -40,6 +40,8 @@ if (!require(grid)) {install.packages('grid')}
 library(grid)
 if (!require(gridExtra)) {install.packages('gridExtra')} 
 library(gridExtra)
+
+options(tigris_use_cache = TRUE)
 ```
 
 #Map of States Visited
