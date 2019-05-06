@@ -1,6 +1,6 @@
 ---
 title: It's Electric!
-description: Using Shiny to map and visualize electricity generation in the Southeast United States from 2001 to 2017
+description: Using Shiny to map and visualize electricity generation in the Southeast United States
 author: Evan Canfield
 date: '2019-05-06'
 slug: electricity-generation-in-the-southeast-united-states
