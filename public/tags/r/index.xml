@@ -13,10 +13,10 @@
     
     <item>
       <title>It&#39;s Electric!</title>
-      <link>/post/electricity-generation-in-the-southeast-united-states/</link>
+      <link>/posts/2019-05-06-its_electric/electricity-generation-in-the-southeast-united-states/</link>
       <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/electricity-generation-in-the-southeast-united-states/</guid>
+      <guid>/posts/2019-05-06-its_electric/electricity-generation-in-the-southeast-united-states/</guid>
       <description>For the final project of the Spring 2019 DSBA 5122: Visual Analytics at University of North Carolina Charlotte class we were tasked with creating an interactive Shiny app based a topic of our choosing. Earlier in the semester I was introduced to the Washington Post article Mapping how the United States generates its electricity. I was captivated by the visuals in the article of energy generation in the Untied states and the story they told.</description>
     </item>
     
