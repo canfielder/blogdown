@@ -1,6 +1,6 @@
 ---
-title: Electricity Generation in the Southeast
-description: Mapping Electricity
+title: It's Electric!
+description: Using Shiny to map and visualize electricity generation in the Southeast United States from 2001 to 2017
 author: Evan Canfield
 date: '2019-05-06'
 slug: electricity-generation-in-the-southeast-united-states
@@ -9,7 +9,7 @@ tags:
   - Shiny
   - R
   - Energy
-draft: yes
+draft: no
 ---
 
 For the final project of the Spring 2019 DSBA 5122: Visual Analytics at University of North Carolina Charlotte class we were tasked with creating an interactive Shiny app based a topic of our choosing. Earlier in the semester I was introduced to the Washington Post article [Mapping how the United States generates its electricity](https://www.washingtonpost.com/graphics/national/power-plants). I was captivated by the visuals in the article of energy generation in the Untied states and the story they told. But the images, while evocative, were static. How would these images have looked if the article was written ten years earlier? Would it look about the same? Radically different? I wasn't sure! 
