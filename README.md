@@ -1,2 +1,4 @@
 # counties_visited
-This is a blogdown post that vizualizes the states and counties I have been to in the United States.
+This is a blogdown for a personal netlify app.
+
+https://evancanfield.netlify.com/
