@@ -1,13 +1,17 @@
 ---
-title: Oh The Places I've Been
-description: Trying to visualize where I have traveled in the United States.
+title: Oh The Places I've Been (UPDATED)
 author: Evan Canfield
-date: '2019-04-29'
+date: '2019-08-30'
+tags:
+  - maps
+  - R
+  - update
+description: Trying to visualize where I have traveled in the United States.
 slug: where-have-i-traveled
-categories: []
-tags: [maps, R]
-draft: false
+draft: no
 ---
+
+**UPDATE: The post was originally written on April 29, 2019. I had a busy summer of travel in 2019 where I visited Washington, Oregon, Utah, and Maine. I had never been to Washington, Oregon, and Utah, and I was able to travel Downeast and visit new areas of Maine. The visuals in this post have been updated accordingly. **
 
 A few years ago, as I was planning a few trips, I was trying to figure out every place I had traveled, particularly in the United States. This started with putting together every state I had gone to, but eventually the question gnawed at for long enough that I put together a list of every county I’d crossed into. That was a bit harder, but I feel confident I was able to accurately recall 95% or more of the counties I’ve been in. It helps when family vacations were generally to the same places each year, and extended family all lived fairly close. 
 
@@ -20,34 +24,22 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 
 
-The following libraries were used.
+The following libraries were used, with tigris shapefiles files cached.
 
 ```{r library_calls, message=FALSE, warning=FALSE}
-#Library Calls
-if (!require(tidyverse)) {install.packages('tidyverse')} 
-library(tidyverse)
-if (!require(broom)) {install.packages('broom')} 
-library(broom)
-if (!require(tigris)) {install.packages('tigris')} 
-library(tigris)
-if (!require(leaflet)) {install.packages('leaflet')} 
-library(leaflet)
-if (!require(ggthemes)) {install.packages('ggthemes')} 
-library(ggthemes)
-if (!require(RColorBrewer)) {install.packages('RColorBrewer')} 
-library(RColorBrewer)
-if (!require(grid)) {install.packages('grid')} 
-library(grid)
-if (!require(gridExtra)) {install.packages('gridExtra')} 
-library(gridExtra)
-
+if (!require(pacman)) {install.packages('pacman')} 
+library(pacman)
+p_load(
+  broom, ggthemes, grid, gridExtra, leaflet, RColorBrewer, 
+       tigris, tidyverse
+)
 options(tigris_use_cache = TRUE)
 ```
 
-#Map of States Visited
+# Map of States Visited
 The first visual I wanted to put together map of the United States with each state I have visited shaded in. To plot this I needed latitude and longitude data for the boundaries of each state. I chose to use the Tigris package for this data. 
 
-##Inputs
+## Inputs
 ```{r state_shapefile_import, cache=TRUE, echo=TRUE, results='hide'}
 state.sp <- states(cb = TRUE)
 ```
@@ -59,12 +51,13 @@ state_list_blank<- state.sp@data %>%
   select(NAME, STUSPS, GEOID) %>% 
   distinct() %>% 
   mutate(Visited = 0) %>%
+  
   #Remove US Territories
   filter(GEOID < 60) %>% 
   arrange((GEOID))
 ```
 
-##Shapefile Processing
+## Shapefile Processing
 
 The Tigris package provides the latitude/longitude data of the US states as a SpatialPolygonsDataFrame. The initial state map visual will use ggplot. Unfortunately, ggplot cannot process a SpatialPolygonsDataFrame. Therefore, the SpatialPolygonsDataFrame must be converted into a standard dataframe.
 
@@ -82,8 +75,7 @@ state.df <- state_points %>%
   filter(long < 1)
 ```
 
-
-##List of States Visited
+## List of States Visited
 Now that we have the state latitude and longitude data in dataframe form I filled out the document listing which states I visited. I did this manually by exporting and then importing the document as a csv. 
 
 ```{r state_list_creation}
@@ -97,30 +89,31 @@ state_list_active <- read.csv("./data/list_of_states_active.csv",
 ```
 
 Now that the latitude and longitude information is in dataframe form the completed list of visited US states has been imported, also in dataframe form, I joined these files to create the final dataframe for use with ggplot. 
-
 ```{r state_df_join}
 state.df_visited <-left_join(state.df, state_list_active, by = c("STUSPS"))
 ```
 
-##Plotting the Map
+## Plotting the Map
 Before plotting the map I defined my colors. I plan on generating several different plots so I would like to define a default color scheme I can easily call to, rather than repeating the call in each plot's code.
 
 ```{r color_fill}
 cols <- c("#F4F6F6", "#1F618D")
 ```
 
-Now that the colors have been defined I can plot the map of states visisted.
+Now that the colors have been defined I can plot the map of states visited.
 
 ```{r us_state_plot}
 US_state <- ggplot(data = state.df_visited, 
-               mapping = aes(x = long, y = lat, 
-                             fill = factor(Visited), group = group))+
+                   mapping = aes(x = long, y = lat, 
+                                 fill = factor(Visited), 
+                                 group = group)
+                   )+
   geom_polygon(color = "gray80", size = 0.05) +
   scale_fill_manual(values = cols) +
   theme_map() + 
   guides(fill=FALSE)+
-  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
-  labs(title = "United States")
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+  #labs(title = "United States")
 
 US_state
 ```
@@ -131,11 +124,11 @@ Above is a map of every state in the Unites States I have visited, sort of. Tech
 
 Yet something feels off about this map. Yes, I have been to all those states, but crossing a state line is not the same as exploring a state. Therefore, instead of just plotting every state that I have crossed into, I think it would be interesting to plot every county I have been in.
 
-#Map of Counties Visited
+# Map of Counties Visited
 
 To create a map of counties visited I more or less repeated the same steps performed to generate the state visual, only this time using county level data.  Again, I turned to the Tigris package.
 
-##Inputs
+## Inputs
 ```{r county_shapefile_import,  cache=TRUE, echo=TRUE, results='hide'}
 #US County Longitude/Latitiude Informaiton from socviz Package
 county.sp <- counties(cb = TRUE)
@@ -175,7 +168,7 @@ county.df <- county_points %>%
   filter(long < 1)
 ```
 
-##List of Counties Visited
+## List of Counties Visited
 Now that the spatial information is in dataframe form and I have a completed Counties Visited document, also in dataframe form, I joined these files to create the final dataframe which to be used with ggplot. 
 
 ```{r county_df_processing}
@@ -200,7 +193,7 @@ county.df_visited <- left_join(county.df, county_list_active,
                                by = c("GEOID" = "FIPS"))
 ```
 
-##Plotting the Map
+## Plotting the Map
 I used the state latitude and longitude dataframe in this plot, as well as the county data. Overlaying the state boundaries data on the county data makes for a clearer map.
 
 ```{r us_county_plot}
@@ -215,8 +208,8 @@ US_county <- ggplot(mapping = aes(x = long, y = lat, group = group)) +
                size = 0.1) +
   theme_map() + 
   guides(fill=FALSE) +
-  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
-  labs(title = "United States")
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+  #labs(title = "United States")
   
 US_county
 ```
@@ -284,11 +277,11 @@ Honestly, no surprises here. For New England it's all of Connecticut, Rhode Isla
 
 For North Carolina, I have been everywhere in the western part of the state. I currently live in Charlotte, which is close-ish to the center of the state. Since I've always been a bigger fan of the mountains than the beach, heading west from Charlotte more than east tracks. 
 
-#Leaflet
+# Leaflet
 
 To try one last thing, I want to generate an interactive visual. I used Leaflet for this. I plant on mapping the same shaded polygons I previously plotted in ggplot on top of the leaflet map. For this plot we do not need to filter out US Territories or Alaska or Hawaii. A complete map of the world is generated regardless. 
 
-An additional wrinkle to using Leaflet is that unlike ggplot, leaflet can use SpatialPolygonsDataFrames. Therefore, we need to create a new dataset that incorporates the county SpatialPolygonsDataFrame along with the Counties Visited information.
+An additional wrinkle to using Leaflet is that unlike ggplot, leaflet can use SpatialPolygonsDataFrames. Therefore, we need to create a new data set that incorporates the county SpatialPolygonsDataFrame along with the Counties Visited information.
 
 ```{r county_visited_geospatial}
 #Join County Latitude/Longitude Data with FIPS County Information - Geo Spatial
@@ -297,8 +290,8 @@ county.sp_visited <- geo_join(spatial_data = county.sp,
                               by_sp = "GEOID", by_df = "FIPS")
 ```
 
-##Leaflet Visual
-Now that a final dataset is available I plotted it in leaflet. Just like in the ggplot county visual I also plot the state SpatialPolygonsDataFrame in order to better visualize the state lines. 
+## Leaflet Visual
+Now that a final data set is available I plotted it in leaflet. Just like in the ggplot county visual I also plot the state SpatialPolygonsDataFrame in order to better visualize the state lines. 
 
 ```{r leaflet}
 
