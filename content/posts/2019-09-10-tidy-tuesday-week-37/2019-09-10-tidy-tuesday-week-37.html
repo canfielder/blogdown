@@ -1,0 +1,222 @@
+---
+title: Tidy Tuesday - Week 37
+author: Evan Canfield
+date: '2019-09-10'
+slug: Amusement Park injuries
+categories: []
+tags:
+  - tidy.tuesday
+  - R
+draft: yes
+---
+
+
+
+<div id="libraries" class="section level1">
+<h1>Libraries</h1>
+<pre class="r"><code>if (!require(pacman)) {install.packages(&#39;pacman&#39;)} 
+p_load(
+    janitor
+  , skimr
+  , stringr
+  , tidyverse
+  , lubridate
+  )</code></pre>
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
+<p>Previous inspection of the raw data shows that some NA values are denoted other strings such as “n/a” or “#########”. This does not get picked up as NA in the default condition so must me manually listed.</p>
+<pre class="r"><code>tx_injuries_0 &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-10/tx_injuries.csv&quot;
+                                 , na = c(&quot;NA&quot;, &quot;n/a&quot;, &quot;#########&quot;, &quot;N/A&quot;, &quot;na&quot;))</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   injury_report_rec = col_double(),
+##   name_of_operation = col_character(),
+##   city = col_character(),
+##   st = col_character(),
+##   injury_date = col_character(),
+##   ride_name = col_character(),
+##   serial_no = col_character(),
+##   gender = col_character(),
+##   age = col_character(),
+##   body_part = col_character(),
+##   alleged_injury = col_character(),
+##   cause_of_injury = col_character(),
+##   other = col_character()
+## )</code></pre>
+</div>
+<div id="inspect" class="section level1">
+<h1>Inspect</h1>
+<pre class="r"><code>glimpse(tx_injuries_0)</code></pre>
+<pre><code>## Observations: 542
+## Variables: 13
+## $ injury_report_rec &lt;dbl&gt; 2032, 1897, 837, 99, 55, 780, 253, 253, 55, ...
+## $ name_of_operation &lt;chr&gt; &quot;Skygroup Investments LLC DBA iFly Austin&quot;, ...
+## $ city              &lt;chr&gt; &quot;Austin&quot;, &quot;Galveston&quot;, &quot;Grapevine&quot;, &quot;San Ant...
+## $ st                &lt;chr&gt; &quot;TX&quot;, &quot;TX&quot;, &quot;TX&quot;, &quot;TX&quot;, &quot;AZ&quot;, &quot;TX&quot;, &quot;TX&quot;, &quot;T...
+## $ injury_date       &lt;chr&gt; &quot;2/12/2013&quot;, &quot;3/2/2013&quot;, &quot;3/3/2013&quot;, &quot;3/3/20...
+## $ ride_name         &lt;chr&gt; &quot;I Fly&quot;, &quot;Gulf Glider&quot;, &quot;Howlin Tornado&quot;, &quot;S...
+## $ serial_no         &lt;chr&gt; &quot;SV024&quot;, &quot;GS-11-10-WG-14&quot;, &quot;0643-C1-T1-TN60&quot;...
+## $ gender            &lt;chr&gt; &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;F&quot;, &quot;M&quot;, &quot;M&quot;,...
+## $ age               &lt;chr&gt; &quot;37&quot;, &quot;43&quot;, NA, &quot;51&quot;, &quot;17&quot;, &quot;40&quot;, &quot;36&quot;, &quot;23&quot;...
+## $ body_part         &lt;chr&gt; &quot;Mouth&quot;, &quot;Knee&quot;, &quot;Right Shoulder&quot;, &quot;Lower Le...
+## $ alleged_injury    &lt;chr&gt; &quot;Student hit mouth on wall&quot;, &quot;Alleged arthro...
+## $ cause_of_injury   &lt;chr&gt; &quot;Student attempted unfamiliar manuever&quot;, &quot;Hi...
+## $ other             &lt;chr&gt; NA, &quot;Prior history of problems with this kne...</code></pre>
+<pre class="r"><code>skim(tx_injuries_0)</code></pre>
+<pre><code>## Skim summary statistics
+##  n obs: 542 
+##  n variables: 13 
+## 
+## -- Variable type:character ------------------------------------------------------------------------------------------------------------------------
+##           variable missing complete   n min max empty n_unique
+##                age      39      503 542   1   7     0       69
+##     alleged_injury      15      527 542   3  81     0      249
+##          body_part       5      537 542   3  49     0      187
+##    cause_of_injury      20      522 542   4 240     0      367
+##               city       0      542 542   4  18     0       52
+##             gender       9      533 542   1   1     0        3
+##        injury_date      29      513 542   5   9     0      371
+##  name_of_operation       0      542 542  14  70     0       68
+##              other     419      123 542   7 144     0       56
+##          ride_name       1      541 542   4  31     0      251
+##          serial_no     152      390 542   1  39     0      186
+##                 st       0      542 542   2   2     0        3
+## 
+## -- Variable type:numeric --------------------------------------------------------------------------------------------------------------------------
+##           variable missing complete   n   mean     sd p0 p25 p50 p75 p100
+##  injury_report_rec       0      542 542 738.58 805.53 55 253 300 837 2919
+##      hist
+##  &lt;U+2587&gt;&lt;U+2582&gt;&lt;U+2581&gt;&lt;U+2581&gt;&lt;U+2581&gt;&lt;U+2581&gt;&lt;U+2582&gt;&lt;U+2581&gt;</code></pre>
+<pre class="r"><code>head(tx_injuries_0)</code></pre>
+<pre><code>## # A tibble: 6 x 13
+##   injury_report_r~ name_of_operati~ city  st    injury_date ride_name
+##              &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;    
+## 1             2032 Skygroup Invest~ Aust~ TX    2/12/2013   I Fly    
+## 2             1897 Willie G&#39;s Post~ Galv~ TX    3/2/2013    Gulf Gli~
+## 3              837 Great Wolf Lodge Grap~ TX    3/3/2013    Howlin T~
+## 4               99 Six Flags Fiest~ San ~ TX    3/3/2013    Scooby D~
+## 5               55 Ray Cammack Sho~ Lave~ AZ    3/11/2013   Alien Ab~
+## 6              780 ZDT&#39;s Amusement~ Segu~ TX    3/12/2013   Go Karts 
+## # ... with 7 more variables: serial_no &lt;chr&gt;, gender &lt;chr&gt;, age &lt;chr&gt;,
+## #   body_part &lt;chr&gt;, alleged_injury &lt;chr&gt;, cause_of_injury &lt;chr&gt;,
+## #   other &lt;chr&gt;</code></pre>
+<pre class="r"><code>tail(tx_injuries_0, n = 20)</code></pre>
+<pre><code>## # A tibble: 20 x 13
+##    injury_report_r~ name_of_operati~ city  st    injury_date ride_name
+##               &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;    
+##  1              286 Traders Village~ Gran~ TX    42959       Larson L~
+##  2              305 Wonderland Amus~ Amar~ TX    42959       Skyride  
+##  3              305 Wonderland Amus~ Amar~ TX    42960       &lt;NA&gt;     
+##  4              305 Wonderland Amus~ Amar~ TX    42960       Skyride  
+##  5             2373 Typhoon Texas -~ Pflu~ TX    42960       The Lone~
+##  6             2373 Typhoon Texas -~ Pflu~ TX    42960       The Boar~
+##  7              247 Schlitterbahn -~ New ~ TX    42961       Boogie B~
+##  8              837 Great Wolf Lodge Grap~ TX    42963       Howlin&#39; ~
+##  9              300 Six Flags - Hur~ Arli~ TX    42965       Bonzai   
+## 10              300 Six Flags - Hur~ Arli~ TX    42981       Bonzai   
+## 11              247 Schlitterbahn -~ New ~ TX    42982       Dragon&#39;s~
+## 12              690 Texas Bells and~ Aust~ TX    43005       Cedar Ro~
+## 13              690 Texas Bells and~ Aust~ TX    43005       Cedar Ro~
+## 14              253 Six Flags Over ~ Arli~ TX    43009       Mr. Free~
+## 15             2236 Skygroup Invest~ Fris~ TX    43011       Wind Tun~
+## 16              253 Six Flags Over ~ Arli~ TX    &lt;NA&gt;        Catwoman~
+## 17             2236 Skygroup Invest~ Fris~ TX    &lt;NA&gt;        Wind Tun~
+## 18             2236 Skygroup Invest~ Fris~ TX    &lt;NA&gt;        Wind Tun~
+## 19             2236 Skygroup Invest~ Fris~ TX    43073       Wind Tun~
+## 20             2236 Skygroup Invest~ Fris~ TX    &lt;NA&gt;        Wind Tun~
+## # ... with 7 more variables: serial_no &lt;chr&gt;, gender &lt;chr&gt;, age &lt;chr&gt;,
+## #   body_part &lt;chr&gt;, alleged_injury &lt;chr&gt;, cause_of_injury &lt;chr&gt;,
+## #   other &lt;chr&gt;</code></pre>
+</div>
+<div id="variable-type-adjustment" class="section level1">
+<h1>Variable Type Adjustment</h1>
+<pre class="r"><code># Factor
+tx_injuries_1 &lt;- tx_injuries_0 %&gt;% 
+  mutate(
+      injury_report_rec = as.factor(injury_report_rec)
+    , gender = as.factor(gender)
+  )</code></pre>
+</div>
+<div id="date-adjustment" class="section level1">
+<h1>Date Adjustment</h1>
+<p>There are two date formats used in the data set, m/d/y and serial number. Both are characters in the imported data set and need to be converted to a date format. The first step is drop all missing dates. Then convert the serial date values into a character string date with a m-d-y format. At this step all dates are a character string with formay m-d-y. Then the character strings can be converted with lubridate into date values.</p>
+<pre class="r"><code># Drop Observations With Missing Dates
+tx_injuries_2 &lt;- tx_injuries_1 %&gt;%
+  # Drop N/A Injury Dates
+  drop_na(injury_date) %&gt;% 
+  # Convert two differernt date strings to dates
+  mutate(injury_date_test = if_else(
+    grepl(pattern = &quot;/&quot;,x = injury_date),           # Check if date has the character &quot;/ to determine format                         
+    mdy(injury_date),                               # Converts M-D-Y type dates
+    excel_numeric_to_date(as.numeric(injury_date)   # Converts Serial type dates
+                          , date_system = &quot;modern&quot;)
+  )
+  ) %&gt;% 
+  select(-injury_date) %&gt;% 
+  rename(injury_date = injury_date_test) %&gt;%        # Replace New Date
+  select(injury_report_rec, name_of_operation
+         , injury_date, everything())</code></pre>
+<pre><code>## Warning: 329 failed to parse.</code></pre>
+<pre><code>## Warning in excel_numeric_to_date(as.numeric(injury_date), date_system =
+## &quot;modern&quot;): NAs introduced by coercion</code></pre>
+<pre class="r"><code>skim(tx_injuries_2)</code></pre>
+<pre><code>## Skim summary statistics
+##  n obs: 513 
+##  n variables: 13 
+## 
+## -- Variable type:character ------------------------------------------------------------------------------------------------------------------------
+##           variable missing complete   n min max empty n_unique
+##                age      38      475 513   1   7     0       69
+##     alleged_injury      12      501 513   3  81     0      239
+##          body_part       3      510 513   3  49     0      181
+##    cause_of_injury      16      497 513   4 240     0      347
+##               city       0      513 513   4  18     0       52
+##  name_of_operation       0      513 513  14  70     0       67
+##              other     395      118 513   7 144     0       51
+##          ride_name       1      512 513   4  31     0      246
+##          serial_no     145      368 513   1  39     0      180
+##                 st       0      513 513   2   2     0        3
+## 
+## -- Variable type:Date -----------------------------------------------------------------------------------------------------------------------------
+##     variable missing complete   n        min        max     median
+##  injury_date       0      513 513 2013-02-12 2017-12-04 2015-06-06
+##  n_unique
+##       357
+## 
+## -- Variable type:factor ---------------------------------------------------------------------------------------------------------------------------
+##           variable missing complete   n n_unique
+##             gender       8      505 513        3
+##  injury_report_rec       0      513 513       52
+##                          top_counts ordered
+##         F: 272, M: 232, NA: 8, m: 1   FALSE
+##  253: 85, 300: 64, 261: 30, 247: 26   FALSE</code></pre>
+</div>
+<div id="investigate" class="section level1">
+<h1>Investigate</h1>
+<div id="month-year" class="section level2">
+<h2>Month Year</h2>
+<pre class="r"><code>tx_injuries_ym &lt;- tx_injuries_2 %&gt;% 
+  mutate(month = month(injury_date),
+         year = year(injury_date)) %&gt;% 
+  group_by(year, month) %&gt;% 
+  summarise(injuries = n())
+
+tx_injuries_ym</code></pre>
+<pre><code>## # A tibble: 50 x 3
+## # Groups:   year [5]
+##     year month injuries
+##    &lt;dbl&gt; &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     2        1
+##  2  2013     3       11
+##  3  2013     4       10
+##  4  2013     5        9
+##  5  2013     6       25
+##  6  2013     7       35
+##  7  2013     8       21
+##  8  2013     9        9
+##  9  2013    10        1
+## 10  2013    11        1
+## # ... with 40 more rows</code></pre>
+</div>
+</div>

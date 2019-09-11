@@ -1,0 +1,92 @@
+---
+title: Tidy Tuesday - Week 37
+author: Evan Canfield
+date: '2019-09-10'
+slug: Amusement Park injuries
+categories: []
+tags:
+  - tidy.tuesday
+  - R
+draft: yes
+---
+
+# Libraries
+```{r library calls, message=FALSE, warning=FALSE}
+if (!require(pacman)) {install.packages('pacman')} 
+p_load(
+    janitor
+  , skimr
+  , stringr
+  , tidyverse
+  , lubridate
+  )
+```
+
+# Data
+Previous inspection of the raw data shows that some NA values are denoted other strings such as "n/a" or "#########". This does not get picked up as NA in the default condition so must me manually listed.
+```{r}
+tx_injuries_0 <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-10/tx_injuries.csv"
+                                 , na = c("NA", "n/a", "#########", "N/A", "na"))
+```
+
+# Inspect
+```{r}
+glimpse(tx_injuries_0)
+```
+
+```{r}
+skim(tx_injuries_0)
+```
+
+```{r}
+head(tx_injuries_0)
+
+tail(tx_injuries_0, n = 20)
+```
+
+# Variable Type Adjustment
+```{r}
+# Factor
+tx_injuries_1 <- tx_injuries_0 %>% 
+  mutate(
+      injury_report_rec = as.factor(injury_report_rec)
+    , gender = as.factor(gender)
+  )
+```
+
+# Date Adjustment
+There are two date formats used in the data set, m/d/y and serial number. Both are characters in the imported data set and need to be converted to a date format. The first step is drop all missing dates. Then convert the serial date values into a character string date with a m-d-y format. At this step all dates are a character string with formay m-d-y. Then the character strings can be converted with lubridate into date values.
+```{r}
+# Drop Observations With Missing Dates
+tx_injuries_2 <- tx_injuries_1 %>%
+  # Drop N/A Injury Dates
+  drop_na(injury_date) %>% 
+  # Convert two differernt date strings to dates
+  mutate(injury_date_test = if_else(
+    grepl(pattern = "/",x = injury_date),           # Check if date has the character "/ to determine format                         
+    mdy(injury_date),                               # Converts M-D-Y type dates
+    excel_numeric_to_date(as.numeric(injury_date)   # Converts Serial type dates
+                          , date_system = "modern")
+  )
+  ) %>% 
+  select(-injury_date) %>% 
+  rename(injury_date = injury_date_test) %>%        # Replace New Date
+  select(injury_report_rec, name_of_operation
+         , injury_date, everything())
+
+skim(tx_injuries_2)
+```
+
+# Investigate
+## Month Year
+```{r}
+tx_injuries_ym <- tx_injuries_2 %>% 
+  mutate(month = month(injury_date),
+         year = year(injury_date)) %>% 
+  group_by(year, month) %>% 
+  summarise(injuries = n())
+
+tx_injuries_ym
+```
+
+
