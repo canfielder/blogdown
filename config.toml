@@ -49,6 +49,8 @@ name = "LinkedIn"
 icon = "linkedin"
 url = "https://www.linkedin.com/in/evancanfield/"
 
-
 [taxonomies]
    tag = "tags"
+
+
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
