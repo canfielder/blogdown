@@ -1,5 +1,5 @@
 ---
-title: 'America's Best Idea - Part 1 #TidyTuesday!'
+title: 'America's Best Idea - Part 2 #TidyTuesday!'
 author: 'Evan Canfield'
 date: '2019-09-16'
 slug: tidy-tuesday-38
