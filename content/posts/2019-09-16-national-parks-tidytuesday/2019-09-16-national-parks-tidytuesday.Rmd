@@ -1,17 +1,19 @@
 ---
-title: 'National Parks #TidyTuesday!'
+title: 'America's Best Idea - Part 1 #TidyTuesday!'
 author: 'Evan Canfield'
 date: '2019-09-16'
 slug: tidy-tuesday-38
 categories: []
 tags:
   - tidy.tuesday
-draft: yes
+draft: no
 ---
 
 # Racing Bar Chart!!!
 
 For #tidytuesday we're looking at America's National Parks! I have already blogged about how much I love the [Nation Park System](https://evancanfield.netlify.com/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/), so this is perfect. My goal is to create a racing bar chart to see which National Park sites have been the most popular since 1904. 
+
+![](data/nps_racing_bar.gif)
 
 ## Libraries
 ```{r library calls, message=FALSE, warning=FALSE}
@@ -28,7 +30,6 @@ p_load(
 
 ## Import Data
 Instead of using the #TidyTuesday data set file, since I have already been exploring the National Park Visitor data, I will use the data I've already gathered. The full public data can be found (here)<https://bit.ly/2kDr64y>. I also have imported a color palette based on the National Park passports. The passports break the country down into color coded regions. I plan to apply the regional colors to each park in the racing bar chart. 
-
 ```{r data import}
 # NPS Visitors
 nps_summary_raw <- read.csv("./data/annual_summary_report_1904-2018.csv",
@@ -37,11 +38,14 @@ nps_summary_raw <- read.csv("./data/annual_summary_report_1904-2018.csv",
 # NPS Region Color Table
 nps_region_colors <- read.csv("./data/nps_region_colors.csv",
                               stringsAsFactors = FALSE)
+
+# Park / Region Definitions
+nps_park_region_list <- read.csv("./data/nps_parks_top_25.csv",
+                              stringsAsFactors = FALSE)
 ```
 
 ## Data Prep
 AThe only important data is the park name, the year, and the number of visitors. So the data set can be greatly pared down. The park name should be treated as a factor. Also, as a side note, I like a consistent case and labeling structure, so I use the janitor package to clean the variable names
-
 ```{r data cleaning}
 nps_summary <- nps_summary_raw %>% 
   clean_names() %>% 
@@ -51,18 +55,31 @@ nps_summary <- nps_summary_raw %>%
 #glimpse(nps_summary)
 #skim(nps_summary)
 ```
+
 The racing bar chart will show the top park sites for each year. To visualize this I need to rank each park by population for each year. I will then filter the data by rank in order to only show the number of sites I decide to use.
 ```{r rank}
 #Number of parks to show on the bar chart
-number_of_parks <- 25
+number_of_parks <- 15
 
 #Create annual rank and filter by number of parks
 nps_summary_rank <- nps_summary %>% 
   group_by(year) %>% 
-  mutate(rank = rank(-recreation_visitors)) %>% 
+  mutate(rank = as.integer(rank(-recreation_visitors))) %>% 
   ungroup() %>% 
-  filter(rank <= number_of_parks)
+  filter(rank <= number_of_parks) %>% 
+  left_join(nps_park_region_list, by = "park_name") %>% 
+  left_join(select(nps_region_colors, nps_region:nps_region_names), by = "nps_region" ) %>% 
+  mutate(nps_region_names = as.factor(nps_region_names))
+```
 
+In order to use the color palette in ggplot I need to develop a color map.
+```{r}
+#Assign Colors to NPS Regions
+color_map <- setNames(nps_region_colors$html_color_code_stamps,
+                      nps_region_colors$nps_region_names)
+```
+
+```{r export top n}
 # Generate list of top n ranked parks
 nps_summary_rank_park_list <- nps_summary_rank %>% 
   distinct(park_name)
@@ -76,22 +93,28 @@ nps_summary_rank_park_list <- nps_summary_rank %>%
 ## Racing Bar Chart
 To create a racing bar chart with R I will use gganimate. First I like to set up a function for the theme and other design parameters.
 ```{r theme function}
-# Font Info
-my_font <- 'Quicksand'
-
 # Theme Parameters
 theme_racing_bar <- function(){
   theme_minimal() +
     theme(
-      axis.title.y = element_blank(),
-      axis.text.y = element_blank(),
-      panel.grid = element_blank()
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      panel.grid = element_blank(),
+      legend.position = "bottom",
+      legend.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.spacing.y = unit(20, "cm"),
+      plot.margin = margin(2,2,2,2,"cm"),
+      plot.title = element_text(
+        hjust = 0.5, 
+        face = "bold",
+        size = 40)
     )
 }
 ```
 
 With that established the animation can be created.
-```{r}
+```{r eval=FALSE, fig.height=10, fig.width=15}
 # Create gganimate object
 nps_racing_bar <- 
   ggplot(
@@ -105,37 +128,75 @@ nps_racing_bar <-
   geom_tile(
     mapping = aes(
       y = recreation_visitors/2,
-      height = recreation_visitors
+      height = recreation_visitors, 
+      width = 0.75,
+      fill = nps_region_names
     )
   ) +
-  # geom_text(
-  #   aes(
-  #     x = -number_of_parks * 0.7,
-  #     y = max(recreation_visitors),
-  #     label = paste0(year)
-  #     ),
-  #   size = 20
-  #   ) +
-  scale_y_continuous(
-    labels=scales::comma
+  geom_text(
+    aes(label = scales::comma(recreation_visitors)),
+    hjust = "left",
+    size = 4,
+    fontface = "bold",
+    nudge_y = 1e5, 
+    colour = "grey30"
+    )+
+  geom_text(
+    aes(label = park_name),
+    colour = "black", 
+    fontface = "bold",
+    size = 4,
+    hjust = "right",
+    nudge_y = -1e5
+    )+
+  geom_text(
+    aes(
+      x = -13,
+      y = 14e6,
+      label = paste0(year)
+      ),
+    size = 20
     ) +
+  scale_y_continuous(
+    labels = scales::comma,
+    limits = c(-5.5e6,22e6)
+    ) +
+  scale_x_continuous(
+    limits = c(-16,0)
+    ) +
+  scale_fill_manual(
+    values = color_map, 
+    drop = FALSE
+    ) +
+  guides(fill = guide_legend(nrow=3)) +
   coord_flip(clip = "off") + 
   ylab(label = "Visitors") +
-  labs(title = "Most Visited National Park Site") +
+  labs(title = "Most Visited National Park Sites",
+       caption = "Data provided by US National Park Service",
+       fill = "NPS Region") +
   theme_racing_bar() +
-  transition_time(time = year)
-  #ease_aes('cubic-in-out') +
-  #view_follow(fixed_y = TRUE)
+  transition_time(time = year) +
+  ease_aes('cubic-in-out')
 
-
-## Animate Plot
-animate(
+# Animate Plot
+nps_racing_bar_gif <- animate(
   plot = nps_racing_bar,
-  nframes = 750,
-  fps = 25,
-  end_pause = 50
+  nframes = 2850,
+  fps = 50,
+  end_pause = 50,
+  width = 960,
+  height = 600
 )
 
+#nps_racing_bar_gif
+
 #nps_racing_bar
+```
+
+# Save Animation
+```{r}
+# anim_save(filename = "nps_racing_bar.gif", 
+#           animation = nps_racing_bar_gif, 
+#           path = "./data/")
 ```
 

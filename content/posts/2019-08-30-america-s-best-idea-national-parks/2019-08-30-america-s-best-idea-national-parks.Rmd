@@ -265,4 +265,6 @@ p_297 <-
     )
 
 p_297
+
+ggsave(plot = p_297, filename = "np_radial_bar.png", scale = 2, path = "./images/")
 ```
