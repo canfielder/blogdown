@@ -1,5 +1,5 @@
 ---
-title: 'America's Best Idea - Part 2 #TidyTuesday!'
+title: "America's Best Idea - Part 2 #TidyTuesday!"
 author: 'Evan Canfield'
 date: '2019-09-16'
 slug: tidy-tuesday-38
@@ -13,7 +13,7 @@ draft: no
 
 For #tidytuesday we're looking at America's National Parks! I have already blogged about how much I love the [Nation Park System](https://evancanfield.netlify.com/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/), so this is perfect. My goal is to create a racing bar chart to see which National Park sites have been the most popular since 1904. 
 
-![](data/nps_racing_bar.gif)
+![](data/nps_racing_bar_low_res.gif)
 
 ## Libraries
 ```{r library calls, message=FALSE, warning=FALSE}
