@@ -1,5 +1,6 @@
 ---
 title: "America's Best Idea - Part 2 #TidyTuesday!"
+description: Racing Bar Chart for America's National Parks
 author: 'Evan Canfield'
 date: '2019-09-16'
 slug: tidy-tuesday-38
@@ -11,10 +12,7 @@ draft: no
 
 
 
-<div id="racing-bar-chart" class="section level1">
-<h1>Racing Bar Chart!!!</h1>
 <p>For #tidytuesday we’re looking at America’s National Parks! I have already blogged about how much I love the <a href="https://evancanfield.netlify.com/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/">Nation Park System</a>, so this is perfect. My goal is to create a racing bar chart to see which National Park sites have been the most popular since 1904.</p>
-<p><img src="data/nps_racing_bar_low_res.gif" /></p>
 <div id="libraries" class="section level2">
 <h2>Libraries</h2>
 <pre class="r"><code>if (!require(pacman)) {install.packages(&#39;pacman&#39;)} 
@@ -80,7 +78,7 @@ nps_summary_rank_park_list &lt;- nps_summary_rank %&gt;%
 #           file = &quot;./data/nps_parks_top_n.csv&quot;, 
 #           row.names = FALSE)</code></pre>
 </div>
-<div id="racing-bar-chart-1" class="section level2">
+<div id="racing-bar-chart" class="section level2">
 <h2>Racing Bar Chart</h2>
 <p>To create a racing bar chart with R I will use gganimate. First I like to set up a function for the theme and other design parameters.</p>
 <pre class="r"><code># Theme Parameters
@@ -129,12 +127,12 @@ nps_racing_bar &lt;-
     colour = &quot;grey30&quot;
     )+
   geom_text(
-    aes(label = park_name),
+    aes(y = 0, label = park_name),
     colour = &quot;black&quot;, 
     fontface = &quot;bold&quot;,
     size = 4,
     hjust = &quot;right&quot;,
-    nudge_y = -1e5
+    nudge_y = -5e5
     )+
   geom_text(
     aes(
@@ -161,28 +159,41 @@ nps_racing_bar &lt;-
   labs(title = &quot;Most Visited National Park Sites&quot;,
        caption = &quot;Data provided by US National Park Service&quot;,
        fill = &quot;NPS Region&quot;) +
-  theme_racing_bar() +
+  theme_racing_bar()  +
   transition_time(time = year) +
   ease_aes(&#39;cubic-in-out&#39;)
 
-# Animate Plot
-nps_racing_bar_gif &lt;- animate(
+#Animate Plot
+# Lower Res for Twitter posts
+# nps_racing_bar_gif_lr &lt;- animate(
+#   plot = nps_racing_bar,
+#   nframes = 1600,
+#   fps = 20,
+#   end_pause = 50,
+#   width = 960,
+#   height = 600
+# )
+
+# Higher Res
+nps_racing_bar_gif_hr &lt;- animate(
   plot = nps_racing_bar,
-  nframes = 2850,
+  nframes = 3000,
   fps = 50,
   end_pause = 50,
   width = 960,
   height = 600
 )
 
-#nps_racing_bar_gif
-
-#nps_racing_bar</code></pre>
-</div>
+nps_racing_bar_gif_hr</code></pre>
+<p><img src="/posts/2019-09-16-national-parks-tidytuesday/2019-09-16-national-parks-tidytuesday_files/figure-html/unnamed-chunk-2-1.gif" /><!-- --></p>
 </div>
 <div id="save-animation" class="section level1">
 <h1>Save Animation</h1>
-<pre class="r"><code># anim_save(filename = &quot;nps_racing_bar.gif&quot;, 
-#           animation = nps_racing_bar_gif, 
-#           path = &quot;./data/&quot;)</code></pre>
+<pre class="r"><code>anim_save(filename = &quot;nps_racing_bar_low_res.gif&quot;,
+          animation = nps_racing_bar_gif_lr,
+          path = &quot;./data/&quot;)
+
+anim_save(filename = &quot;nps_racing_bar_high_res.gif&quot;,
+          animation = nps_racing_bar_gif_hr,
+          path = &quot;./data/&quot;)</code></pre>
 </div>
