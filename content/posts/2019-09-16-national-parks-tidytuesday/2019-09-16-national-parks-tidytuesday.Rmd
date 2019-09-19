@@ -58,11 +58,26 @@ nps_summary <- nps_summary_raw %>%
   clean_names() %>% 
   select(park_name, year, recreation_visitors) %>% 
   mutate(park_name = as.factor(park_name))
-
-#glimpse(nps_summary)
-#skim(nps_summary)
 ```
 
+### Hot Springs National Park 1906-1909
+There appears to be missing data for Hot Springs National Park between 1905 and 1910. It's not clear why this is, but it is particularly noticable due to Hot Springs being the number one visited park during that period. Visitation numbers were on a differnet magnitude compared to the other parks. To smooth out the bar chart I am going to interpolate Hot Springs visitor numbers for those missing years. 
+```{r}
+# Interpolation Values
+x <- ts(c(109000,NA,NA,NA,NA,112000))
+
+y <- na_interpolation(x)
+
+# Input Interpolated Values
+nps_summary <- nps_summary%>%
+  rbind(list("Hot Springs NP", 1906, y[2])) %>%
+  rbind(list("Hot Springs NP", 1907, y[3])) %>%
+  rbind(list("Hot Springs NP", 1908, y[4])) %>%
+  rbind(list("Hot Springs NP", 1909, y[5])) %>% 
+  arrange(year)
+```
+
+### Ranking
 The racing bar chart will show the top park sites for each year. To visualize this I need to rank each park by population for each year. I will then filter the data by rank in order to only show the number of sites I decide to use.
 ```{r rank}
 #Number of parks to show on the bar chart
@@ -80,6 +95,7 @@ nps_summary_rank <- nps_summary %>%
   mutate(nps_region_names = as.factor(nps_region_names))
 ```
 
+## Color
 In order to use the color palette in ggplot I need to develop a color map.
 ```{r}
 #Assign Colors to NPS Regions
@@ -87,6 +103,8 @@ color_map <- setNames(nps_region_colors$html_color_code_stamps,
                       nps_region_colors$nps_region_names)
 ```
 
+## Region CSV
+I created a list of every park that had ever been in th eannual top 25. I then exported to csv and manually added region data to that csv. The file was then reimported into this code above.
 ```{r export top n}
 # Generate list of top n ranked parks
 nps_summary_rank_park_list <- nps_summary_rank %>% 
