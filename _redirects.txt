@@ -1,0 +1,5 @@
+/posts/2019-04-29-where-have-i-traveled/where-have-i-traveled/	https://evan-canfield.netlify.com/post/2020-03-23-data-viz-travel/data-viz-travel/
+/posts/2019-05-06-its_electric/electricity-generation-in-the-southeast-united-states/
+/posts/2019-09-10-tidy-tuesday-week-37/amusement-park-injuries/
+/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/
+/posts/2019-09-16-national-parks-tidytuesday/tidy-tuesday-38/
