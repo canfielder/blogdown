@@ -1,0 +1,12 @@
+---
+title: America's Best Idea - National Parks
+author: Evan Canfield
+date: '2019-08-30'
+slug: national-park-visuals
+categories: []
+tags:
+  - R
+draft: no
+---
+
+Test

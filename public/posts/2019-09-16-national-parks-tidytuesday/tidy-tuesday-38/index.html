@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>America&#39;s Best Idea - Part 2 #TidyTuesday! - Evan Canfield</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="America&#39;s Best Idea - Part 2 #TidyTuesday!" />
+<meta property="og:description" content="Racing Bar Chart for America&#39;s National Parks" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/2019-09-16-national-parks-tidytuesday/tidy-tuesday-38/" />
+<meta property="article:published_time" content="2019-09-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-09-18T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="America&#39;s Best Idea - Part 2 #TidyTuesday!"/>
+<meta name="twitter:description" content="Racing Bar Chart for America&#39;s National Parks"/>
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:500,100,300" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" media="screen" href="/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" /><script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script><script src="/js/main.js"></script>
+</head>
+
+<body>
+	<div class="container wrapper post">
+		<div class="header">
+	<h1 class="site-title">Evan Canfield</h1>
+	<div class="site-description"><h2>~ Always Read the Plaque ~</h2><nav class="nav social">
+			<ul class="flat"><a href="https://github.com/canfielder" title="Github"><i data-feather="github"></i></a><a href="https://www.linkedin.com/in/evancanfield/" title="LinkedIn"><i data-feather="linkedin"></i></a></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/posts">All posts</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+			<li>
+				<a href="/tags">Tags</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post-header">
+			<h1 class="title">America&#39;s Best Idea - Part 2 #TidyTuesday!</h1>
+			<div class="meta">Posted at &mdash; Sep 18, 2019</div>
+		</div>
+
+		<div class="markdown">
+			
+
+
+<p><strong>Update:</strong>
+After getting some great feedback on twitter from the #rstats community I was able to make a few tweaks to improve the racing bar chart. I’d like to thank <span class="citation">@CedScherer</span> who pointed me to this great <a href="https://github.com/amrrs/animated_bar_charts_in_R">Github repo</a> and <span class="citation">@JonTheGeek</span> who directed me to last weeks <a href="https://www.tidytuesday.com/3">#TidyTuesday podcast</a></p>
+<div id="racing-bar-chart" class="section level1">
+<h1>Racing Bar Chart!!!</h1>
+<p>For #tidytuesday we’re looking at America’s National Parks! I have already blogged about how much I love the <a href="https://evancanfield.netlify.com/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/">Nation Park System</a>, so this is perfect. My goal is to create a racing bar chart to see which National Park sites have been the most popular since 1904.</p>
+<div id="libraries" class="section level2">
+<h2>Libraries</h2>
+<pre class="r"><code>if (!require(pacman)) {install.packages(&#39;pacman&#39;)} 
+p_load(
+    gganimate
+  , janitor
+  , skimr
+  , stringr
+  , tidyverse
+  , lubridate
+  )</code></pre>
+</div>
+<div id="import-data" class="section level2">
+<h2>Import Data</h2>
+<p>Instead of using the #TidyTuesday data set file, since I have already been exploring the National Park Visitor data, I will use the data I’ve already gathered. The full public data can be found <a href="https://bit.ly/1kEMuRo">here</a> (make sure to select All Years, All Parks, and Summary Only? = False to get the full data set). I also have imported a color palette based on the National Park passports. The passports break the country down into color coded regions. I plan to apply the regional colors to each park in the racing bar chart.</p>
+<pre class="r"><code># NPS Visitors
+nps_summary_raw &lt;- read.csv(&quot;./data/annual_summary_report_1904-2018.csv&quot;,
+                        stringsAsFactors = FALSE)
+
+# NPS Region Color Table
+nps_region_colors &lt;- read.csv(&quot;./data/nps_region_colors.csv&quot;,
+                              stringsAsFactors = FALSE)
+
+# Park / Region Definitions
+nps_park_region_list &lt;- read.csv(&quot;./data/nps_parks_top_25.csv&quot;,
+                              stringsAsFactors = FALSE)</code></pre>
+</div>
+<div id="data-prep" class="section level2">
+<h2>Data Prep</h2>
+<p>The only important data is the park name, the year, and the number of visitors. So the data set can be greatly pared down. The park name should be treated as a factor. Also, as a side note, I like a consistent case and labeling structure, so I use the janitor package to clean the variable names.</p>
+<pre class="r"><code>nps_summary &lt;- nps_summary_raw %&gt;% 
+  clean_names() %&gt;% 
+  select(park_name, year, recreation_visitors) %&gt;% 
+  mutate(park_name = as.factor(park_name))
+
+#glimpse(nps_summary)
+#skim(nps_summary)</code></pre>
+<p>The racing bar chart will show the top park sites for each year. To visualize this I need to rank each park by population for each year. I will then filter the data by rank in order to only show the number of sites I decide to use.</p>
+<pre class="r"><code>#Number of parks to show on the bar chart
+number_of_parks &lt;- 15
+
+#Create annual rank and filter by number of parks
+nps_summary_rank &lt;- nps_summary %&gt;% 
+  group_by(year) %&gt;% 
+  mutate(rank = as.integer(rank(-recreation_visitors))) %&gt;% 
+  ungroup() %&gt;% 
+  filter(rank &lt;= number_of_parks) %&gt;% 
+  left_join(nps_park_region_list, by = &quot;park_name&quot;) %&gt;% 
+  left_join(select(nps_region_colors, nps_region:nps_region_names),
+            by = &quot;nps_region&quot; ) %&gt;% 
+  mutate(nps_region_names = as.factor(nps_region_names))</code></pre>
+<pre><code>## Warning: Column `park_name` joining factor and character vector, coercing
+## into character vector</code></pre>
+<p>In order to use the color palette in ggplot I need to develop a color map.</p>
+<pre class="r"><code>#Assign Colors to NPS Regions
+color_map &lt;- setNames(nps_region_colors$html_color_code_stamps,
+                      nps_region_colors$nps_region_names)</code></pre>
+<pre class="r"><code># Generate list of top n ranked parks
+nps_summary_rank_park_list &lt;- nps_summary_rank %&gt;% 
+  distinct(park_name)
+
+## Export Top N list for generating a cross reference of parks and regions
+# write.csv(x = nps_summary_rank_park_list,
+#           file = &quot;./data/nps_parks_top_n.csv&quot;, 
+#           row.names = FALSE)</code></pre>
+</div>
+<div id="racing-bar-chart-1" class="section level2">
+<h2>Racing Bar Chart</h2>
+<p>To create a racing bar chart with R I will use gganimate. First I like to set up a function for the theme and other design parameters.</p>
+<pre class="r"><code># Theme Parameters
+theme_racing_bar &lt;- function(){
+  theme_minimal() +
+    theme(
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      panel.grid = element_blank(),
+      legend.position = &quot;bottom&quot;,
+      legend.text = element_text(size = 16),
+      legend.title = element_text(size = 20),
+      legend.spacing.y = unit(20, &quot;cm&quot;),
+      plot.margin = margin(2,4,2,6,&quot;cm&quot;),
+      plot.title = element_text(
+        hjust = 0.5, 
+        face = &quot;bold&quot;,
+        size = 40),
+      plot.subtitle = element_text(
+      hjust = 0.5, 
+      face = &quot;italic&quot;,
+      size = 30)
+    )
+}</code></pre>
+<p>With that established the animation can be created.</p>
+<pre class="r"><code># Create gganimate object
+nps_racing_bar &lt;- 
+  ggplot(
+    data = nps_summary_rank,
+    mapping = aes(
+      x = rank,
+      y = recreation_visitors,
+      group = park_name
+         )
+    ) +
+  geom_tile(
+    mapping = aes(
+      y = recreation_visitors/2,
+      height = recreation_visitors, 
+      width = 0.75,
+      fill = nps_region_names
+    )
+  ) +
+  geom_text(
+    aes(
+      y = recreation_visitors,
+      label = paste0(&quot;   &quot;,scales::comma(recreation_visitors))
+      ),
+    hjust = 0,
+    size = 6,
+    fontface = &quot;bold&quot;,
+    colour = &quot;grey30&quot;
+    )+
+  geom_text(
+    aes(y = 0, label = paste0(park_name,&quot;   &quot;)),
+    colour = &quot;black&quot;, 
+    fontface = &quot;bold&quot;,
+    size = 4,
+    hjust = 1
+    )+
+  scale_y_continuous(
+    labels = scales::comma
+    #limits = c(-5.5e6,22e6)
+    ) +
+  scale_x_reverse() +
+  scale_fill_manual(
+    values = color_map, 
+    drop = FALSE
+    ) +
+  guides(fill = guide_legend(nrow=3)) +
+  coord_flip(clip = &quot;off&quot;) + 
+  ylab(label = &quot;Visitors&quot;) +
+  labs(title = &quot;Top 15 Visited National Park Sites&quot;,
+       subtitle = &quot;Annual Visitors: {frame_time}&quot;,
+       caption = &quot;Recreational Visitors |Data Source: United States National Park Service&quot;,
+       fill = &quot;NPS Region&quot;) +
+  theme_racing_bar()  +
+  transition_time(time = year) +
+  ease_aes(&#39;sine-in-out&#39;) +
+  view_follow(fixed_x = TRUE) 
+
+# # Animation Plot
+# # Super Lower Res for testing
+# nps_racing_bar_gif_test &lt;- animate(
+#   plot = nps_racing_bar,
+#   nframes = 228,
+#   fps = 2,
+#   end_pause = 50,
+#   width = 1200,
+#   height = 900
+# )
+#
+#
+# # Lower Res for Twitter posts
+# nps_racing_bar_gif_lr &lt;- animate(
+#   plot = nps_racing_bar,
+#   nframes = 1140,
+#   fps = 10,
+#   end_pause = 50,
+#   width = 1200,
+#   height = 900
+# )
+# 
+# Higher Res
+nps_racing_bar_gif_hr &lt;- animate(
+  plot = nps_racing_bar,
+  nframes = 3000,
+  fps = 50,
+  end_pause = 50,
+  width = 1200,
+  height = 900
+)</code></pre>
+</div>
+<div id="run-animation" class="section level2">
+<h2>Run Animation</h2>
+<pre class="r"><code>#nps_racing_bar_gif_test
+#nps_racing_bar_gif_lr
+nps_racing_bar_gif_hr</code></pre>
+<p><img src="/posts/2019-09-16-national-parks-tidytuesday/2019-09-16-national-parks-tidytuesday_files/figure-html/unnamed-chunk-3-1.gif" /><!-- --></p>
+</div>
+<div id="save-animation" class="section level2">
+<h2>Save Animation</h2>
+<pre class="r"><code>anim_save(filename = &quot;nps_racing_bar_low_res.gif&quot;,
+          animation = nps_racing_bar_gif_lr,
+          path = &quot;./data/&quot;)
+
+anim_save(filename = &quot;nps_racing_bar_high_res.gif&quot;,
+          animation = nps_racing_bar_gif_hr,
+          path = &quot;./data/&quot;)</code></pre>
+</div>
+</div>
+
+		</div><div id="disqus_thread"></div>
+<script type="text/javascript">
+	(function () {
+		
+		
+		if (window.location.hostname == "localhost")
+			return;
+
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		var disqus_shortname = '';
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+		Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div><a href="https://github.com/vividvilla/ezhil">Ezhil theme</a> | Built with <a href="gohugo.io">Hugo</a></div>
+	</nav>
+</div>
+
+</body>
+</html>

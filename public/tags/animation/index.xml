@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>animation on Evan Canfield</title>
+    <link>/tags/animation/</link>
+    <description>Recent content in animation on Evan Canfield</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/animation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>America&#39;s Best Idea - Part 2 #TidyTuesday!</title>
+      <link>/posts/2019-09-16-national-parks-tidytuesday/tidy-tuesday-38/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-09-16-national-parks-tidytuesday/tidy-tuesday-38/</guid>
+      <description>Update:After getting some great feedback on twitter from the #rstats community I was able to make a few tweaks to improve the racing bar chart. I’d like to thank @CedScherer who pointed me to this great Github repo and @JonTheGeek who directed me to last weeks #TidyTuesday podcast
+Racing Bar Chart!!!For #tidytuesday we’re looking at America’s National Parks! I have already blogged about how much I love the Nation Park System, so this is perfect.</description>
+    </item>
+    
+  </channel>
+</rss>

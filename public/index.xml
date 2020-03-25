@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Evan Canfield</title>
+    <link>/</link>
+    <description>Recent content on Evan Canfield</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>America&#39;s Best Idea - Part 2 #TidyTuesday!</title>
+      <link>/posts/2019-09-16-national-parks-tidytuesday/tidy-tuesday-38/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-09-16-national-parks-tidytuesday/tidy-tuesday-38/</guid>
+      <description>Update:After getting some great feedback on twitter from the #rstats community I was able to make a few tweaks to improve the racing bar chart. I’d like to thank @CedScherer who pointed me to this great Github repo and @JonTheGeek who directed me to last weeks #TidyTuesday podcast
+Racing Bar Chart!!!For #tidytuesday we’re looking at America’s National Parks! I have already blogged about how much I love the Nation Park System, so this is perfect.</description>
+    </item>
+    
+    <item>
+      <title>America&#39;s Best Idea - Part 1</title>
+      <link>/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/</link>
+      <pubDate>Tue, 10 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-08-30-america-s-best-idea-national-parks/national-park-visuals/</guid>
+      <description>National parks are the best idea we ever had. Absolutely American, absolutelydemocratic, they reflect us at our best rather than our worst.
+- Wallace Stegner
+I love America’s National Parks. The National Park Service administers 419 official units, of which 61 are designated National Parks, of which I’ve visited seven. My goal is to visit every single National Park, so I have a ways to go. And unfortunately, since I currently live on the eastern half of the United States, there are few parks close by.</description>
+    </item>
+    
+    <item>
+      <title>Amusement Park injuries - &#39;#TidyTuesday&#39;</title>
+      <link>/posts/2019-09-10-tidy-tuesday-week-37/amusement-park-injuries/</link>
+      <pubDate>Tue, 10 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-09-10-tidy-tuesday-week-37/amusement-park-injuries/</guid>
+      <description>For #tidytuesday we’re looking at Amusement Park injuries. I plan on making a simple visual of the number of injuries by month.
+Librariesif (!require(pacman)) {install.packages(&amp;#39;pacman&amp;#39;)} p_load(janitor, skimr, stringr, tidyverse, lubridate)Import DataPrevious inspection of the raw data shows that some NA values are denoted other strings such as “n/a” or “#########”. This does not get picked up as NA in the default condition so must me manually listed.</description>
+    </item>
+    
+    <item>
+      <title>Oh The Places I&#39;ve Been (UPDATED)</title>
+      <link>/posts/2019-04-29-where-have-i-traveled/where-have-i-traveled/</link>
+      <pubDate>Fri, 30 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-04-29-where-have-i-traveled/where-have-i-traveled/</guid>
+      <description>UPDATE: The post was originally written on April 29, 2019. I had a busy summer of travel in 2019 where I visited Washington, Oregon, Utah, and Maine. I had never been to Washington, Oregon, and Utah, and I was able to travel Downeast and visit new areas of Maine. The visuals in this post have been updated accordingly. 
+A few years ago, as I was planning a few trips, I was trying to figure out every place I had traveled, particularly in the United States.</description>
+    </item>
+    
+    <item>
+      <title>It&#39;s Electric!</title>
+      <link>/posts/2019-05-06-its_electric/electricity-generation-in-the-southeast-united-states/</link>
+      <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-05-06-its_electric/electricity-generation-in-the-southeast-united-states/</guid>
+      <description>For the final project of the Spring 2019 DSBA 5122: Visual Analytics at University of North Carolina Charlotte class we were tasked with creating an interactive Shiny app based a topic of our choosing. Earlier in the semester I was introduced to the Washington Post article Mapping how the United States generates its electricity. I was captivated by the visuals in the article of energy generation in the Untied states and the story they told.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Fri, 19 Apr 2019 21:37:58 +0530</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Design Engineer in the Nuclear energy space. Data Science and Business Analytics student at UNCC. Currently residing in Charlotte, NC.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/posts/2019-09-10-tidy-tuesday-week-37/data/tx_injuries/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/2019-09-10-tidy-tuesday-week-37/data/tx_injuries/</guid>
+      <description>tidytuesday/tx_injuries.csv at master · rfordatascience/tidytuesday  Skip to content         --     In this repository  All GitHub  ↵  Jump to ↵     No suggested jump to results        In this repository  All GitHub  ↵  Jump to ↵         In this repository  All GitHub  ↵  Jump to ↵           Dashboard  Pull requests  Issues  Marketplace   Explore  canfielder   -- Sign out     rfordatascience / tidytuesday          New repository  Import repository  New gist  New organization   This repository  New issue       Signed in as canfielder     Set status      --  Edit status         Could not update your status, please try again.</description>
+    </item>
+    
+  </channel>
+</rss>

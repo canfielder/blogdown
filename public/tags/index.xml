@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Evan Canfield</title>
+    <link>/tags/</link>
+    <description>Recent content in Tags on Evan Canfield</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>animation</title>
+      <link>/tags/animation/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/animation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Energy</title>
+      <link>/tags/energy/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/energy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ggplot2</title>
+      <link>/tags/ggplot2/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/ggplot2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tidy.tuesday</title>
+      <link>/tags/tidy.tuesday/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/tidy.tuesday/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>update</title>
+      <link>/tags/update/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/update/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>R</title>
+      <link>/tags/r/</link>
+      <pubDate>Tue, 10 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/r/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>maps</title>
+      <link>/tags/maps/</link>
+      <pubDate>Fri, 30 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/maps/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Shiny</title>
+      <link>/tags/shiny/</link>
+      <pubDate>Mon, 06 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/shiny/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
